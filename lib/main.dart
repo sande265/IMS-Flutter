@@ -1,5 +1,9 @@
 import 'dart:io';
+import 'package:ims_flutter/Screens/dashboard.dart';
 import 'package:ims_flutter/Screens/home_page.dart';
+import 'package:ims_flutter/Screens/login.dart';
+import 'package:ims_flutter/Screens/profile.dart';
+import 'package:ims_flutter/helpers/general_helpers.dart';
 import 'package:ims_flutter/popups/popup_card.dart';
 import 'package:ims_flutter/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -17,37 +21,44 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  static final ValueNotifier<ThemeMode> themeNotifier =
+      ValueNotifier(ThemeMode.light);
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness:
-      !kIsWeb && Platform.isAndroid ? Brightness.dark : Brightness.light,
+          !kIsWeb && Platform.isAndroid ? Brightness.dark : Brightness.light,
       systemNavigationBarColor: Colors.white,
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    return MaterialApp(
-      title: 'Flutter UI',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: AppTheme.textTheme,
-        platform: TargetPlatform.iOS,
-      ),
-      // home: const SafeArea(child: PopupCard()),
-      initialRoute: HomeScreen.id,
-      routes: {
-        // WelcomeScreen.id: (context) => WelcomeScreen(),
-        // LoginScreen.id: (context) => LoginScreen(),
-        // RegistrationScreen.id: (context) => RegistrationScreen(),
-        // ChatScreen.id: (context) => ChatScreen(),
-        HomeScreen.id: (context) => const HomeScreen(),
-        PopupCard.id: (context) => const PopupCard(),
-        // NewSalePage.id: (context) => NewSalePage(),
-      },
-    );
+    return ValueListenableBuilder<ThemeMode>(
+        valueListenable: themeNotifier,
+        builder: (_, ThemeMode currentMode, __) {
+          return MaterialApp(
+            title: 'Inventory Management System',
+            debugShowCheckedModeBanner: false,
+            darkTheme: ThemeData.dark(),
+            themeMode: currentMode,
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              textTheme: AppTheme.textTheme,
+              platform: TargetPlatform.iOS,
+            ),
+            // home: const HomeScreen(),
+            initialRoute: isAuthenticated() ? HomeScreen.id : LoginScreen.id,
+            routes: {
+              LoginScreen.id: (context) => const LoginScreen(),
+              HomeScreen.id: (context) => const HomeScreen(),
+              PopupCard.id: (context) => const PopupCard(),
+              ProfilePage.id: (context) => const ProfilePage(),
+              Dashboard.id: (context) => const Dashboard(),
+            },
+          );
+        });
   }
 }
 

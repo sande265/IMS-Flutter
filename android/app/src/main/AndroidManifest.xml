@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="np.com.sandeshsingh.ims.ims_flutter">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="ims_flutter"
+        android:label="IMS"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

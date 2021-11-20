@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:ims_flutter/Screens/dashboard.dart';
 import 'package:ims_flutter/api/api.dart';
 import 'package:ims_flutter/constants/constants.dart';
 import 'package:ims_flutter/helpers/general_helpers.dart';
@@ -46,8 +47,7 @@ class _PopupCardState extends State<PopupCard> {
       data['qty'] = _data['_qty'];
       var response =
           await Api().postData(data, '/sell/${_data['_selectedItem']}');
-      print(response);
-      if (response != null && response['data'] != null) {
+      if (response['message'] != null && response['qty'] != null) {
         _showToast(context, response['message'], Colors.green);
         setState(() {
           ctLoading = false;
@@ -58,6 +58,7 @@ class _PopupCardState extends State<PopupCard> {
             "_qty": 1,
           };
           fieldText.clear();
+          Navigator.pop(context, Dashboard.id);
         });
       } else {
         setState(() {
@@ -82,7 +83,7 @@ class _PopupCardState extends State<PopupCard> {
             ),
           ],
         ),
-        duration: const Duration(milliseconds: 2000),
+        duration: const Duration(milliseconds: 4000),
         backgroundColor: color,
         action: SnackBarAction(
             label: 'X',
@@ -152,248 +153,244 @@ class _PopupCardState extends State<PopupCard> {
                             child: CircularProgressIndicator(),
                           )
                         : Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'Product',
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      color: Colors.grey[800],
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Product',
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: Colors.grey[800],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 6.0),
-                                child: DropdownButton(
-                                  hint: _data['_dropDownValue'] == ''
-                                      ? Text(
-                                          'Select product',
-                                          style: TextStyle(
-                                              color: Colors.grey[700]),
-                                        )
-                                      : Text(
-                                          _data['_dropDownValue'],
-                                          style: const TextStyle(
-                                              color: Colors.black),
-                                        ),
-                                  isExpanded: true,
-                                  iconSize: 30.0,
-                                  isDense: true,
-                                  dropdownColor: Colors.white,
-                                  iconEnabledColor: Colors.black,
-                                  focusColor: Colors.lightBlueAccent,
-                                  style: const TextStyle(color: Colors.black),
-                                  items: data.map(
-                                    (item) {
-                                      return DropdownMenuItem<String>(
-                                        value: item['product_name'],
-                                        child: Text(item['product_name']),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 6.0),
+                                  child: DropdownButton(
+                                    hint: _data['_dropDownValue'] == ''
+                                        ? Text(
+                                            'Select product',
+                                            style: TextStyle(
+                                                color: Colors.grey[700]),
+                                          )
+                                        : Text(
+                                            _data['_dropDownValue'],
+                                            style: const TextStyle(
+                                                color: Colors.black),
+                                          ),
+                                    isExpanded: true,
+                                    iconSize: 30.0,
+                                    isDense: true,
+                                    dropdownColor: Colors.white,
+                                    iconEnabledColor: Colors.black,
+                                    focusColor: Colors.lightBlueAccent,
+                                    style: const TextStyle(color: Colors.black),
+                                    items: data.map(
+                                      (item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item['product_name'] ?? '',
+                                          child: Text(item['product_name']),
+                                        );
+                                      },
+                                    ).toList(),
+                                    onChanged: (val) {
+                                      var itemId;
+                                      data.forEach((item) {
+                                        if (item['product_name'] == val) {
+                                          itemId = item['id'];
+                                        }
+                                      });
+                                      setState(
+                                        () {
+                                          _data['_dropDownValue'] =
+                                              val.toString();
+                                          _data['_selectedItem'] =
+                                              itemId.toString();
+                                        },
                                       );
                                     },
-                                  ).toList(),
-                                  onChanged: (val) {
-                                    print(val);
-                                    var itemId;
-                                    data.forEach((item) {
-                                      if (item['product_name'] == val) {
-                                        itemId = item['id'];
-                                      }
-                                    });
-                                    setState(
-                                      () {
-                                        _data['_dropDownValue'] =
-                                            val.toString();
-                                        _data['_selectedItem'] =
-                                            itemId.toString();
-                                        print(_data);
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Sale Price',
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      color: Colors.grey[800],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 6.0),
-                                child: TextField(
-                                  decoration:
-                                      kNormalInputFieldDecoration.copyWith(
-                                    hintText: 'Enter Sale Price',
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                                  controller: fieldText,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _data['_salePrice'] = value;
-                                    });
-                                  },
-                                  style: const TextStyle(
-                                    color: Colors.black,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  GestureDetector(
-                                    onTapUp: (TapUpDetails details) {
-                                      _timer.cancel();
-                                    },
-                                    onTapCancel: () {
-                                      _timer.cancel();
-                                    },
-                                    onTapDown: (TapDownDetails details) {
-                                      _timer = Timer.periodic(
-                                          const Duration(milliseconds: 300),
-                                          (t) {
-                                        if (_data['_qty'] > 1) {
-                                          setState(() {
-                                            _data['_qty']--;
-                                          });
-                                        } else {
-                                          _showToast(
-                                              context,
-                                              'Quantity Cannot be lower than 1.',
-                                              Colors.red);
-                                        }
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Sale Price',
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: Colors.grey[800],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 6.0),
+                                  child: TextField(
+                                    decoration:
+                                        kNormalInputFieldDecoration.copyWith(
+                                      hintText: 'Enter Sale Price',
+                                      hintStyle: TextStyle(
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                    controller: fieldText,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _data['_salePrice'] = value;
                                       });
                                     },
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        if (_data['_qty'] > 1) {
-                                          setState(() {
-                                            _data['_qty']--;
-                                          });
-                                        } else {
-                                          _showToast(
-                                              context,
-                                              'Quantity Cannot be lower than 1.',
-                                              Colors.red);
-                                        }
-                                      },
-                                      child: const Icon(
-                                        Icons.remove,
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        shape: const CircleBorder(),
-                                        padding: const EdgeInsets.all(10),
-                                        primary: Colors
-                                            .white, // <-- Button color
-                                        onPrimary:
-                                            Colors.red, // <-- Splash color
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    _data['_qty'].toString(),
                                     style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 30.0),
-                                  ),
-                                  GestureDetector(
-                                    onTapUp: (TapUpDetails details) {
-                                      _timer.cancel();
-                                    },
-                                    onTapCancel: () {
-                                      _timer.cancel();
-                                    },
-                                    onTapDown: (TapDownDetails details) {
-                                      _timer = Timer.periodic(
-                                          const Duration(milliseconds: 300),
-                                          (t) {
-                                        setState(() {
-                                          _data['_qty']++;
-                                        });
-                                      });
-                                    },
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _data['_qty']++;
-                                        });
-                                      },
-                                      child: const Icon(
-                                        Icons.add,
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        shape: const CircleBorder(),
-                                        padding: const EdgeInsets.all(10),
-                                        primary: Colors
-                                            .white, // <-- Button color
-                                        onPrimary: Colors
-                                            .green, // <-- Splash color
-                                      ),
+                                      color: Colors.black,
                                     ),
                                   ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 25.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      ctLoading = true;
-                                    });
-                                    handleSubmit();
-                                  },
-                                  child: ctLoading
-                                      ? const Center(
-                                          child:
-                                              CircularProgressIndicator(),
-                                        )
-                                      : const Text(
-                                          'Submit',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 24.0),
-                                        ),
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors
-                                          .greenAccent, //background color of button
-                                      side: const BorderSide(
-                                          width: 3,
-                                          color: Colors
-                                              .lightBlueAccent), //border width and color
-                                      elevation: 3, //elevation of button
-                                      shape: RoundedRectangleBorder(
-                                          //to set border radius to button
-                                          borderRadius:
-                                              BorderRadius.circular(30)),
-                                      padding: const EdgeInsets.all(10)),
                                 ),
-                              )
-                            ],
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    GestureDetector(
+                                      onTapUp: (TapUpDetails details) {
+                                        _timer.cancel();
+                                      },
+                                      onTapCancel: () {
+                                        _timer.cancel();
+                                      },
+                                      onTapDown: (TapDownDetails details) {
+                                        _timer = Timer.periodic(
+                                            const Duration(milliseconds: 300),
+                                            (t) {
+                                          if (_data['_qty'] > 1) {
+                                            setState(() {
+                                              _data['_qty']--;
+                                            });
+                                          } else {
+                                            _showToast(
+                                                context,
+                                                'Quantity Cannot be lower than 1.',
+                                                Colors.red);
+                                          }
+                                        });
+                                      },
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          if (_data['_qty'] > 1) {
+                                            setState(() {
+                                              _data['_qty']--;
+                                            });
+                                          } else {
+                                            _showToast(
+                                                context,
+                                                'Quantity Cannot be lower than 1.',
+                                                Colors.red);
+                                          }
+                                        },
+                                        child: const Icon(
+                                          Icons.remove,
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: const CircleBorder(),
+                                          padding: const EdgeInsets.all(10),
+                                          primary:
+                                              Colors.white, // <-- Button color
+                                          onPrimary:
+                                              Colors.red, // <-- Splash color
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      _data['_qty'].toString(),
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 30.0),
+                                    ),
+                                    GestureDetector(
+                                      onTapUp: (TapUpDetails details) {
+                                        _timer.cancel();
+                                      },
+                                      onTapCancel: () {
+                                        _timer.cancel();
+                                      },
+                                      onTapDown: (TapDownDetails details) {
+                                        _timer = Timer.periodic(
+                                            const Duration(milliseconds: 300),
+                                            (t) {
+                                          setState(() {
+                                            _data['_qty']++;
+                                          });
+                                        });
+                                      },
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _data['_qty']++;
+                                          });
+                                        },
+                                        child: const Icon(
+                                          Icons.add,
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: const CircleBorder(),
+                                          padding: const EdgeInsets.all(10),
+                                          primary:
+                                              Colors.white, // <-- Button color
+                                          onPrimary:
+                                              Colors.green, // <-- Splash color
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 25.0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        ctLoading = true;
+                                      });
+                                      handleSubmit();
+                                    },
+                                    child: ctLoading
+                                        ? const Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : const Text(
+                                            'Submit',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 24.0),
+                                          ),
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors
+                                            .greenAccent, //background color of button
+                                        side: const BorderSide(
+                                            width: 3,
+                                            color: Colors
+                                                .lightBlueAccent), //border width and color
+                                        elevation: 3, //elevation of button
+                                        shape: RoundedRectangleBorder(
+                                            //to set border radius to button
+                                            borderRadius:
+                                                BorderRadius.circular(30)),
+                                        padding: const EdgeInsets.all(10)),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
-                        ),
                   ),
                 ],
               ),
@@ -406,11 +403,17 @@ class _PopupCardState extends State<PopupCard> {
 
   void getProducts() async {
     var response = await Api().getData('/products?limit=1000');
-    print(response);
     if (response['data'] != null) {
-      data = response['data'];
+      var _data = response['data'];
+      var _filtered = [];
+      for (var i = 0; i < _data.length; i++) {
+        if (_data[i]['qty'] > 0) {
+          _filtered.add(_data[i]);
+        }
+      }
       setState(() {
         loading = false;
+        data = _filtered;
       });
     } else {
       setState(() {

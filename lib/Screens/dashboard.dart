@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:ims_flutter/Screens/views/sales_summary_view.dart';
 import 'package:ims_flutter/Screens/views/glass_view.dart';
-import 'package:ims_flutter/Screens/views/meals_list_view.dart';
 import 'package:ims_flutter/Screens/views/daily_sales_view.dart';
 import 'package:ims_flutter/Screens/views/title_view.dart';
-import 'package:ims_flutter/Screens/views/water_view.dart';
 import 'package:ims_flutter/api/api.dart';
 import 'package:ims_flutter/theme/app_theme.dart';
 import 'package:ims_flutter/widgets/refresh_widget.dart';
 import 'package:intl/intl.dart';
 
 class Dashboard extends StatefulWidget {
+  static const id = 'dashboard';
   const Dashboard({Key? key, this.animationController}) : super(key: key);
 
   final AnimationController? animationController;
@@ -18,8 +17,7 @@ class Dashboard extends StatefulWidget {
   _DashboardState createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard>
-    with TickerProviderStateMixin {
+class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   Animation<double>? topBarAnimation;
 
   List<Widget> listViews = <Widget>[];
@@ -85,9 +83,11 @@ class _DashboardState extends State<Dashboard>
       listViews.add(
         TitleView(
           titleTxt: 'No Internet',
-          animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: widget.animationController!,
-              curve: const Interval((1 / 9) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+          animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                  parent: widget.animationController!,
+                  curve: const Interval((1 / 9) * 0, 1.0,
+                      curve: Curves.fastOutSlowIn))),
           animationController: widget.animationController!,
         ),
       );
@@ -129,8 +129,8 @@ class _DashboardState extends State<Dashboard>
         subTxt: 'Details',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
-            curve:
-            const Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+            curve: const Interval((1 / count) * 0, 1.0,
+                curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
       ),
     );
@@ -139,8 +139,8 @@ class _DashboardState extends State<Dashboard>
         data: datas,
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
-            curve:
-            const Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn))),
+            curve: const Interval((1 / count) * 1, 1.0,
+                curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
       ),
     );
@@ -151,8 +151,8 @@ class _DashboardState extends State<Dashboard>
         subTxt: 'Details',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
-            curve:
-            const Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
+            curve: const Interval((1 / count) * 4, 1.0,
+                curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
       ),
     );
@@ -162,8 +162,8 @@ class _DashboardState extends State<Dashboard>
         data: _data,
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
-            curve:
-            const Interval((1 / count) * 5, 1.0, curve: Curves.fastOutSlowIn))),
+            curve: const Interval((1 / count) * 5, 1.0,
+                curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
       ),
     );
@@ -224,8 +224,7 @@ class _DashboardState extends State<Dashboard>
               return listViews[index];
             },
           );
-        }
-        else {
+        } else {
           return const Center(
             child: CircularProgressIndicator(),
           );
@@ -253,8 +252,7 @@ class _DashboardState extends State<Dashboard>
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                          color: AppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
+                          color: AppTheme.grey.withOpacity(0.4 * topBarOpacity),
                           offset: const Offset(1.1, 1.1),
                           blurRadius: 10.0),
                     ],
@@ -374,10 +372,9 @@ class _DashboardState extends State<Dashboard>
       SnackBar(
         content: Text('$message'),
         backgroundColor: color,
-        action:
-        SnackBarAction(
-            label: 'X',
-            onPressed: scaffold.hideCurrentSnackBar,
+        action: SnackBarAction(
+          label: 'X',
+          onPressed: scaffold.hideCurrentSnackBar,
           textColor: Colors.white,
         ),
       ),
@@ -389,7 +386,7 @@ class _DashboardState extends State<Dashboard>
     String strippedDate;
     String m = date.split(' ')[0].substring(0, 3);
     String d = date.split(" ")[1].split(',')[0];
-    strippedDate = m +' '+ d;
+    strippedDate = m + ' ' + d;
     return strippedDate;
   }
 
@@ -399,15 +396,29 @@ class _DashboardState extends State<Dashboard>
     if (type == '+') {
       int day = int.parse(b);
       day++;
-      setState(() {
-        currentDate = a + '-' + day.toString();
-      });
+      if (day < 10) {
+        var temp = '0$day';
+        setState(() {
+          currentDate = a + '-' + temp;
+        });
+      } else {
+        setState(() {
+          currentDate = a + '-' + day.toString();
+        });
+      }
     } else {
       int day = int.parse(b);
       day--;
-      setState(() {
-        currentDate = a + '-' + day.toString();
-      });
+      if (day < 10) {
+        var temp = '0$day';
+        setState(() {
+          currentDate = a + '-' + temp;
+        });
+      } else {
+        setState(() {
+          currentDate = a + '-' + day.toString();
+        });
+      }
     }
     getData();
   }

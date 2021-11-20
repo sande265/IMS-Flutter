@@ -4,32 +4,41 @@ import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class Api {
-  static const String _baseURL =
-      'https://ims-backend.dev.sandeshsingh.com.np/api';
-  static String token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzYW5kZXRlY2h0aXBzIiwic3ViIjoxLCJuYW1lIjoiU2FuZGVzaCBTaW5naCIsImVtYWlsIjoic2FuZGVzaHNpbmdoMjY1QGdtYWlsLmNvbSIsImlhdCI6MTYzNDAxOTYxOSwiZXhwIjoxNjY1NTc3MjE5fQ.xeDVgNqDolC1rTDURDKcGn8_EAjJQGRpJV61ItLvRMo';
+  static const String _baseURL = 'http://10.0.2.2:8000/api';
+  static String token = '';
   postData(data, url) async {
-    var response = await http.post(
-      Uri.parse(_baseURL + url),
-      body: jsonEncode(data),
-      headers: _headerConfig(),
-    );
-    if (response.statusCode == 200) {
-      print('success');
-      return jsonDecode(response.body);
-    }
-    if (response.statusCode == 400) {
-      print('error ${response.body}');
-      return jsonDecode(response.body);
-    } else {
-      print('Unknown error ${response.body}');
-      return jsonDecode(response.body);
+    try {
+      final result = await InternetAddress.lookup('google.com')
+          .timeout(const Duration(milliseconds: 5000));
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        var response = await http.post(
+          Uri.parse(_baseURL + url),
+          body: jsonEncode(data),
+          headers: _authHeaderConfig(),
+        );
+        if (response.statusCode == 200) {
+          print('success');
+          return jsonDecode(response.body);
+        }
+        if (response.statusCode == 400) {
+          print('error ${response.body}');
+          return jsonDecode(response.body);
+        } else {
+          print('Unknown error ${response.body}');
+          return jsonDecode(response.body);
+        }
+      } else {
+        return null;
+      }
+    } catch (_) {
+      return null;
     }
   }
 
   getData(url) async {
     try {
-      final result = await InternetAddress.lookup('google.com').timeout(Duration(milliseconds: 5000));
+      final result = await InternetAddress.lookup('google.com')
+          .timeout(const Duration(milliseconds: 5000));
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         var response = await http.get(
           Uri.parse(_baseURL + url),

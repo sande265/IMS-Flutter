@@ -9,7 +9,7 @@ getErrorMessage(error) {
 
 isAuthenticated() {
   var token = Api.token;
-  if (token == null || token == '') {
+  if (token == '') {
     return false;
   } else if (JwtDecoder.isExpired(token)) {
     return false;

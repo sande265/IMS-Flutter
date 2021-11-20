@@ -1,4 +1,5 @@
 import 'package:ims_flutter/Screens/dashboard.dart';
+import 'package:ims_flutter/Screens/profile.dart';
 import 'package:ims_flutter/models/tabicon.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/training/training_screen.dart';
 import 'package:flutter/material.dart';
@@ -110,10 +111,10 @@ class _HomeScreenState extends State<HomeScreen>
                 if (!mounted) {
                   return;
                 }
-                // setState(() {
-                //   tabBody =
-                //       TrainingScreen(animationController: animationController);
-                // });
+                setState(() {
+                  tabBody =
+                      ProfilePage(animationController: animationController);
+                });
               });
             }
           },

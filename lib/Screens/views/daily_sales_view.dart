@@ -125,7 +125,10 @@ class DailySalesView extends StatelessWidget {
                                                       const EdgeInsets.only(
                                                           left: 4, bottom: 3),
                                                   child: Text(
-                                                      data['total_amount'] != null ? data['total_amount'].toString() : '0',
+                                                    data['total_amount'] != null
+                                                        ? data['total_amount']
+                                                            .toString()
+                                                        : '0',
                                                     textAlign: TextAlign.center,
                                                     style: const TextStyle(
                                                       fontFamily:
@@ -201,7 +204,10 @@ class DailySalesView extends StatelessWidget {
                                                       const EdgeInsets.only(
                                                           left: 4, bottom: 3),
                                                   child: Text(
-                                                      data['total_qty'] != null ? data['total_qty'].toString() : '0',
+                                                    data['total_qty'] != null
+                                                        ? data['total_qty']
+                                                            .toString()
+                                                        : '0',
                                                     textAlign: TextAlign.center,
                                                     style: const TextStyle(
                                                       fontFamily:
@@ -272,12 +278,15 @@ class DailySalesView extends StatelessWidget {
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
                                           Text(
-                                            data['monthly_total'] != null ? getAmount(data['monthly_total'].toString()) : '0',
+                                            data['monthly_total'] != null
+                                                ? data['monthly_total']
+                                                    .toString()
+                                                : '0',
                                             textAlign: TextAlign.center,
                                             style: const TextStyle(
                                               fontFamily: AppTheme.fontName,
                                               fontWeight: FontWeight.normal,
-                                              fontSize: 24,
+                                              fontSize: 18,
                                               letterSpacing: 0.0,
                                               color: AppTheme.nearlyDarkBlue,
                                             ),
@@ -288,7 +297,7 @@ class DailySalesView extends StatelessWidget {
                                             style: TextStyle(
                                               fontFamily: AppTheme.fontName,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 10,
+                                              fontSize: 11,
                                               letterSpacing: 0.0,
                                               color: AppTheme.grey
                                                   .withOpacity(0.5),
