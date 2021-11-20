@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class Api {
-  static const String _baseURL = 'http://10.0.2.2:8000/api';
+  static const String _baseURL =
+      'https://ims-backend.dev.sandeshsingh.com.np/api';
   static String token = '';
   postData(data, url) async {
     try {
